@@ -1,0 +1,4 @@
+@SGT_BRIDGE_HostAddress = http://localhost:5071
+
+GET {{SGT_BRIDGE_HostAddress}}/
+###
