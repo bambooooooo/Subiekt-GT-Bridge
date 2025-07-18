@@ -58,5 +58,13 @@ namespace SGT_BRIDGE.Models
         /// List of packages with quantity
         /// </summary>
         public List<PackageLineItem>? Packages { get; set; }
+        /// <summary>
+        /// Base Price (tkw)
+        /// </summary>
+        public decimal BasePrice { get; set; }
+        /// <summary>
+        /// Product price levels
+        /// </summary>
+        public List<ProductPrice> Prices { get; set; }        
     }
 }

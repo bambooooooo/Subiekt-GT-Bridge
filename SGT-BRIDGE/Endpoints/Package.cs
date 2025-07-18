@@ -125,6 +125,11 @@ namespace SGT_BRIDGE.Endpoints
                     }
                 }
 
+                if(p.BasePrice > 0)
+                {
+                    tw.CenaKartotekowa = p.BasePrice;
+                }
+
                 tw.Zapisz();
 
                 int id = tw.Identyfikator;

@@ -112,8 +112,8 @@ namespace SGT_BRIDGE.Endpoints
                 if(p.NamePl != null)
                     tw.Opis = p.NamePl;
 
-                if(p.NameEn != null)
-                    tw.Uwagi = p.NameEn;
+                if(p.NameEn != null && worker.NAME_EN_FIELD_NAME != string.Empty)
+                    tw.PoleWlasne[worker.NAME_EN_FIELD_NAME] = p.NameEn;
 
                 if (p.Ean != null && p.Ean.Length > 1)
                 {
@@ -206,6 +206,24 @@ namespace SGT_BRIDGE.Endpoints
                     }
                 }
 
+                if (p.BasePrice > 0)
+                {
+                    tw.CenaKartotekowa = p.BasePrice;
+                }
+
+                if(p.Prices != null && p.Prices.Count > 0)
+                {
+                    foreach(TwCena cena in tw.Ceny)
+                    {
+                        var pl = p.Prices.FirstOrDefault(x => x.Code == cena.Nazwa);
+
+                        if(pl != default)
+                        {
+                            cena.Netto = pl.Price;
+                        }
+                    }
+                }
+
                 if (p.Image != null && p.Image != "")
                 {
                     string tmpName = $"./tmp/{DateTime.Now:HH.mm.ss.ffff}";
@@ -260,6 +278,8 @@ namespace SGT_BRIDGE.Endpoints
                 int id = tw.Identyfikator;
                 tw.Zamknij();
 
+                Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][+] Product #{p.Id}.");
+
                 return TypedResults.Ok(id);
             });
         }
@@ -286,6 +306,7 @@ namespace SGT_BRIDGE.Endpoints
                 if(tw.MoznaUsunac)
                 {
                     tw.Usun();
+                    Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][-] Product #{code}.");
                     return TypedResults.Ok();
                 }
 

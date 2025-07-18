@@ -54,6 +54,7 @@ namespace SGT_BRIDGE.Services
         public readonly string LENGTH_FIELD_NAME;
         public readonly string WIDTH_FIELD_NAME;
         public readonly string HEIGHT_FIELD_NAME;
+        public readonly string NAME_EN_FIELD_NAME;
 
         private readonly Channel<SubiektRequest<object>> _channel = Channel.CreateUnbounded<SubiektRequest<object>>();
         private readonly Thread _workerThread;
@@ -70,6 +71,7 @@ namespace SGT_BRIDGE.Services
             LENGTH_FIELD_NAME = _config["SGT:Product:Customfield:Depth"] ?? "Głębokość";
             WIDTH_FIELD_NAME = _config["SGT:Product:Customfield:Width"] ?? "Szerokość";
             HEIGHT_FIELD_NAME = _config["SGT:Product:Customfield:Height"] ?? "Wysokość";
+            NAME_EN_FIELD_NAME = _config["SGT:Product:NameEnFieldName"] ?? string.Empty;
 
             _workerThread = new Thread(WorkerLoop)
             {
@@ -108,9 +110,6 @@ namespace SGT_BRIDGE.Services
                 {
                     if(_channel.Reader.TryRead(out var request))
                     {
-                        var t = DateTime.Now.ToString("[yyyy.MM.dd HH:mm:ss]");
-                        Console.WriteLine($"{t} [x] request");
-
                         try
                         {
                             var result = request.Request(_subiekt!);

@@ -43,6 +43,19 @@ builder.Services.AddSingleton<SubiektGT>();
 builder.Services.AddAuthentication().AddBearerToken();
 builder.Services.AddAuthorization();
 
+if (builder.Environment.IsDevelopment()) 
+{ 
+    builder.Services.AddHttpLogging(logging => {
+        logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestMethod | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPath | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestBody;
+    });
+}
+else
+{
+    builder.Services.AddHttpLogging(logging => {
+        logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestMethod | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPath;
+    });
+}
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -57,6 +70,8 @@ else
     app.UseAuthorization();
 }
 
+app.UseHttpLogging();
+
 app.RegisterIndexEndpoint();
 app.RegisterProductEndpoint();
 app.RegisterPackageEndpoint();
@@ -66,6 +81,7 @@ var localIp = Dns.GetHostEntry(Dns.GetHostName())
         && (ip.ToString().StartsWith("192.") || ip.ToString().StartsWith("10.")));
 
 app.Urls.Add($"http://{localIp}:5071");
+app.Urls.Add($"http://localhost:5071");
 
 app.Run();
 

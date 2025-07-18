@@ -37,5 +37,9 @@ namespace SGT_BRIDGE.Models
         /// Package volume
         /// </summary>
         public decimal Volume { get; set; }
+        /// <summary>
+        /// Base price (TKW)
+        /// </summary>
+        public decimal BasePrice { get; set; }
     }
 }
