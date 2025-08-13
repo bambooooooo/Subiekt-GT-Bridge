@@ -38,7 +38,6 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddSingleton<SubiektGT>();
-builder.Services.AddDbContext<TxContext>(options => options.UseSqlite("Data Source=tx.db"));
 
 builder.Services.AddAuthentication().AddBearerToken();
 builder.Services.AddAuthorization();
@@ -73,12 +72,17 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
-if(!app.Environment.IsDevelopment())
+}
+else
 {
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
+
+    var localIp = Dns.GetHostEntry(Dns.GetHostName())
+    .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
+        && (ip.ToString().StartsWith("192.") || ip.ToString().StartsWith("10.")));
+    app.Urls.Add($"http://{localIp}:5071");
 }
 
 app.UseHttpLogging();
@@ -89,12 +93,7 @@ app.RegisterPackageEndpoint();
 app.RegisterPriceEndpoint();
 app.RegisterUserEndpoint();
 
-var localIp = Dns.GetHostEntry(Dns.GetHostName())
-    .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork 
-        && (ip.ToString().StartsWith("192.") || ip.ToString().StartsWith("10.")));
 
-app.Urls.Add($"http://{localIp}:5071");
-app.Urls.Add($"https://{localIp}:7271");
 
 app.Run();
 

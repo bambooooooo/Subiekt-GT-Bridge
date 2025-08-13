@@ -1,4 +1,5 @@
 ﻿using InsERT;
+using Microsoft.EntityFrameworkCore;
 using SGT_BRIDGE.Models;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
