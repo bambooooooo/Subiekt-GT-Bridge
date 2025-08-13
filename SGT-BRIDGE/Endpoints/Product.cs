@@ -104,6 +104,7 @@ namespace SGT_BRIDGE.Endpoints
                     tw.Symbol = p.Id;
                     tw.Nazwa = p.Key;
                     tw.OznaczenieJpkVat = OznaczenieTowJpkVatEnum.gtaOznaczTowJpkVat00_NieOznaczaj;
+                    tw.Zapisz();
                 }
 
                 if(p.Key != null)
@@ -224,6 +225,36 @@ namespace SGT_BRIDGE.Endpoints
                             cena.Netto = pl.Price;
                         }
                     }
+
+                    foreach(var price in p.Prices)
+                    {
+                        var priceLevel = worker.db.LEO_SystemRabatowy_Zestawy.FirstOrDefault(x => x.zr_Symbol == price.Id.ToUpper());
+
+                        if (priceLevel == default)
+                            continue;
+
+                        int priceLevelId = priceLevel.zr_Id;
+
+                        int twId = tw.Identyfikator;
+                        var pp = worker.db.LEO_SystemRabatowy_ZestawyPowiazania.FirstOrDefault(x=>x.zrp_ZestawId == priceLevelId && x.zrp_Typ.Value == 1 && x.zrp_ObiektId.Value == twId);
+
+                        if (pp == default)
+                        {
+                            var newpp = worker.db.LEO_SystemRabatowy_ZestawyPowiazania.Add(new LEO_SystemRabatowy_ZestawyPowiazania()
+                            {
+                                zrp_ZestawId = priceLevelId,
+                                zrp_ObiektId = twId,
+                                zrp_Typ = 1,
+                                zrp_Wartosc = price.Price,
+                                zrp_Wartosc2 = price.Price * 1.23m,
+                            });
+                }
+                        else
+                        {
+                            pp.zrp_Wartosc = price.Price;
+                            pp.zrp_Wartosc2 = pp.zrp_Wartosc * 1.23m;
+                        }
+                    }
                 }
 
                 if (p.Image != null && p.Image != "")
@@ -279,6 +310,8 @@ namespace SGT_BRIDGE.Endpoints
 
                 int id = tw.Identyfikator;
                 tw.Zamknij();
+
+                worker.db.SaveChanges();
 
                 Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][+] Product #{p.Id}.");
 

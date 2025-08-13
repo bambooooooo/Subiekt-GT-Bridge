@@ -7,10 +7,7 @@
             app.MapGet("/", () => "Subiekt GT API Bridge")
                 .ExcludeFromDescription();
 
-            app.MapGet("/configuration", (IConfiguration config) =>
-            {
-                return Configuration(config);
-            });
+            app.MapGet("/configuration", GetConfiguration);
         }
 
         /// <summary>
@@ -18,6 +15,11 @@
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
+        public static async Task<IResult> GetConfiguration(IConfiguration config)
+        {
+            return TypedResults.Ok(Configuration(config));
+        }
+
         private static Dictionary<string, string> Configuration(IConfiguration config)
         {
             var data = new Dictionary<string, string>();
