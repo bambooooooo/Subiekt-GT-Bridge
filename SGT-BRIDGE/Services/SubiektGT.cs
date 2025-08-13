@@ -60,6 +60,8 @@ namespace SGT_BRIDGE.Services
         private readonly Thread _workerThread;
         private InsERT.Subiekt? _subiekt;
 
+        public SubiektGTDbContext? db;
+
         private readonly CancellationTokenSource _cts = new();
 
         readonly IConfiguration _config;
@@ -104,6 +106,13 @@ namespace SGT_BRIDGE.Services
 
                 _subiekt = (Subiekt)gt.Uruchom((int)UruchomDopasujEnum.gtaUruchomDopasujOperatora, (int)UruchomEnum.gtaUruchomNowy | (int)UruchomEnum.gtaUruchomWTle);
 
+                string connstr = (_subiekt.Baza.Polaczenie).ConnectionString;
+
+                var optionsBuilder = new DbContextOptionsBuilder<SubiektGTDbContext>();
+                optionsBuilder.UseSqlServer(connstr);
+
+                db = new SubiektGTDbContext(optionsBuilder.Options);
+
                 Console.WriteLine($"Connected. (PID={_subiekt.IdentyfikatorProcesu})");
 
                 while(!_cts.IsCancellationRequested)
@@ -125,6 +134,7 @@ namespace SGT_BRIDGE.Services
             catch(Exception ex)
             {
                 Console.WriteLine("STA Thread Exception: " + ex.Message);
+                throw ex;
             }
         }
 
