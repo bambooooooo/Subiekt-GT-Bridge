@@ -364,3 +364,7 @@ FodyWeavers.xsd
 
 # Test configs
 **/*appsettings.*.json
+/SGT-BRIDGE/tmp
+/SGT-BRIDGE/tx.db
+/SGT-BRIDGE/Apps
+/SGT-BRIDGE/certs
