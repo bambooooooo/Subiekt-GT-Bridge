@@ -4,6 +4,7 @@ using SGT_BRIDGE.Models;
 using SGT_BRIDGE.Services;
 using System.Drawing;
 using System.Data;
+using System.Runtime.InteropServices;
 
 namespace SGT_BRIDGE.Endpoints
 {
@@ -16,6 +17,7 @@ namespace SGT_BRIDGE.Endpoints
             items.MapGet("/{code}", Get);
             items.MapPost("/", Post);
             items.MapDelete("/{code}", Delete);
+            items.MapPut("/stocks/{code}", Stocks);
 
             ClearTempFiles();
         }
@@ -311,6 +313,50 @@ namespace SGT_BRIDGE.Endpoints
                 }
 
                 return TypedResults.Conflict("Can not delete object");
+            });
+        }
+
+        /// <summary>
+        /// Update product stocks* (as custom field preview only)
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="stocks"></param>
+        /// <param name="worker"></param>
+        /// <returns></returns>
+        public async static Task<IResult> Stocks(string code, int stocks, SubiektGT worker)
+        {
+            return await worker.EnqueueAsync<IResult>(subiekt =>
+            {
+                if(!subiekt.TowaryManager.IstniejeWg(code, TowarParamWyszukEnum.gtaTowarWgSymbolu))
+                {
+                    return TypedResults.BadRequest("Product not found");
+                }
+
+                Towar towar = subiekt.TowaryManager.WczytajTowarWg(code, TowarParamWyszukEnum.gtaTowarWgSymbolu);
+                bool success = false;
+
+                for(int i = 0; i<5; i++)
+                {
+                    try
+                    {
+                        towar.PoleWlasne["Stan magazynowy*"] = stocks;
+                        towar.Zapisz();
+                        success = true;
+                    }
+                    catch(COMException ex)
+                    {
+                        Console.WriteLine("[WARN]: " + ex.Message);
+                    }
+                }
+
+                if(success)
+                {
+                    return TypedResults.Ok(code);
+                }
+                else
+                {
+                    return TypedResults.UnprocessableEntity("Can not edit product's stocks");
+                }
             });
         }
 
