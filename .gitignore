@@ -367,3 +367,4 @@ FodyWeavers.xsd
 /SGT-BRIDGE/tmp
 /SGT-BRIDGE/Apps
 /SGT-BRIDGE/certs
+/SGT-BRIDGE/tx.db
