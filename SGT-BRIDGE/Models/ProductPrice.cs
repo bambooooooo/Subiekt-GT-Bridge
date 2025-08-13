@@ -14,5 +14,9 @@
         /// Price in level's currency
         /// </summary>
         public decimal Price { get; set; }
+        /// <summary>
+        /// Is a brutto price?
+        /// </summary>
+        public bool Brutto { get; set; }
     }
 }

@@ -53,18 +53,11 @@ else
     builder.Services.AddHttpLogging(logging => {
         logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestMethod | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPath;
     });
-
-    builder.WebHost.ConfigureKestrel(serverOptions =>
-    {
-        serverOptions.Limits.MaxRequestHeadersTotalSize = 65536;
-        serverOptions.Limits.MaxRequestLineSize = 8192;
-
-        serverOptions.ListenAnyIP(5071, listenOptions =>
-        {
-            listenOptions.UseHttps("certs/ssl.pfx", "ramboo");
-        });
-    });
 }
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
 
@@ -78,12 +71,13 @@ else
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
+}
 
-    var localIp = Dns.GetHostEntry(Dns.GetHostName())
+var localIp = Dns.GetHostEntry(Dns.GetHostName())
     .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
         && (ip.ToString().StartsWith("192.") || ip.ToString().StartsWith("10.")));
-    app.Urls.Add($"http://{localIp}:5071");
-}
+
+app.Urls.Add($"http://{localIp}:5071");
 
 app.UseHttpLogging();
 

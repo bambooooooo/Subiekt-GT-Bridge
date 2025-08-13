@@ -5,6 +5,8 @@ using SGT_BRIDGE.Services;
 using System.Drawing;
 using System.Data;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
 namespace SGT_BRIDGE.Endpoints
 {
@@ -82,7 +84,7 @@ namespace SGT_BRIDGE.Endpoints
         /// <param name="p"></param>
         /// <param name="worker"></param>
         /// <returns></returns>
-        public async static Task<IResult> Post(Product p, SubiektGT worker)
+        private async static Task<IResult> Post(Product p, SubiektGT worker, ILogger<Program> logger)
         {
             return await worker.EnqueueAsync<IResult>(sgt =>
             {
@@ -214,20 +216,32 @@ namespace SGT_BRIDGE.Endpoints
                     tw.CenaKartotekowa = p.BasePrice;
                 }
 
+                bool priceUpdate = false;
+
                 if(p.Prices != null && p.Prices.Count > 0)
                 {
                     foreach(TwCena cena in tw.Ceny)
                     {
-                        var pl = p.Prices.FirstOrDefault(x => x.Code == cena.Nazwa);
+                        var pl = p.Prices.FirstOrDefault(x => x.Code.ToUpper() == ((string)cena.Nazwa).ToUpper());
 
                         if(pl != default)
                         {
-                            cena.Netto = pl.Price;
+                            if(pl.Brutto)
+                            {
+                                cena.Brutto = pl.Price;
+                            }
+                            else
+                            {
+                                cena.Netto = pl.Price;
+                            }
                         }
                     }
 
                     foreach(var price in p.Prices)
                     {
+                        decimal netto = (price.Brutto) ? price.Price / 1.23m : price.Price;
+                        decimal brutto = (price.Brutto) ? price.Price : price.Price * 1.23m;
+
                         var priceLevel = worker.db.LEO_SystemRabatowy_Zestawy.FirstOrDefault(x => x.zr_Symbol == price.Id.ToUpper());
 
                         if (priceLevel == default)
@@ -245,15 +259,17 @@ namespace SGT_BRIDGE.Endpoints
                                 zrp_ZestawId = priceLevelId,
                                 zrp_ObiektId = twId,
                                 zrp_Typ = 1,
-                                zrp_Wartosc = price.Price,
-                                zrp_Wartosc2 = price.Price * 1.23m,
+                                zrp_Wartosc = netto,
+                                zrp_Wartosc2 = brutto,
                             });
-                }
+                        }
                         else
                         {
-                            pp.zrp_Wartosc = price.Price;
-                            pp.zrp_Wartosc2 = pp.zrp_Wartosc * 1.23m;
+                            pp.zrp_Wartosc = netto;
+                            pp.zrp_Wartosc2 = brutto;
                         }
+
+                        priceUpdate = true;
                     }
                 }
 
@@ -311,7 +327,8 @@ namespace SGT_BRIDGE.Endpoints
                 int id = tw.Identyfikator;
                 tw.Zamknij();
 
-                worker.db.SaveChanges();
+                if(priceUpdate)
+                    worker.db.SaveChanges();
 
                 Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][+] Product #{p.Id}.");
 

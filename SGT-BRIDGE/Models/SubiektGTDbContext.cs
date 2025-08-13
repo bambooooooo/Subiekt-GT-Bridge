@@ -31,10 +31,6 @@ public partial class SubiektGTDbContext : DbContext
 
     public virtual DbSet<sl_Magazyn> sl_Magazyn { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(local)\\PROD;Initial Catalog=MEGSTYL;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<LEO_SystemRabatowy_Zbiorcze>(entity =>
@@ -48,7 +44,7 @@ public partial class SubiektGTDbContext : DbContext
 
         modelBuilder.Entity<LEO_SystemRabatowy_Zestawy>(entity =>
         {
-            entity.HasKey(e => e.zr_Id).HasName("PK__LEO_Syst__FB4BF42D1D0EF822");
+            entity.HasKey(e => e.zr_Id);
 
             entity.HasIndex(e => e.zr_Symbol, "SymbolUnique").IsUnique();
 
@@ -98,7 +94,7 @@ public partial class SubiektGTDbContext : DbContext
 
         modelBuilder.Entity<LEO_SystemRabatowy_ZestawyPowiazania>(entity =>
         {
-            entity.HasKey(e => e.zrp_Id).HasName("PK__LEO_Syst__1F060F0FFD51D672");
+            entity.HasKey(e => e.zrp_Id);
 
             entity.HasIndex(e => new { e.zrp_Typ, e.zrp_ZestawId, e.zrp_ObiektId }, "IDX_ZP").IsUnique();
 

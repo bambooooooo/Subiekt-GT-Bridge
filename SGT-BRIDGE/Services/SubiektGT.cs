@@ -107,10 +107,13 @@ namespace SGT_BRIDGE.Services
 
                 _subiekt = (Subiekt)gt.Uruchom((int)UruchomDopasujEnum.gtaUruchomDopasujOperatora, (int)UruchomEnum.gtaUruchomNowy | (int)UruchomEnum.gtaUruchomWTle);
 
-                string connstr = (_subiekt.Baza.Polaczenie).ConnectionString;
+                string auth = (_config["SGT:Auth"] == "Windows") ? "Integrated Security=True" : $"User Id={_config["SGT:User"]};Password={_config["SGT:Password"]}";
+                string connstr = $"Data Source={_config["SGT:Server"]};Initial Catalog={_config["SGT:Database"]};{auth};Encrypt=True;Trust Server Certificate=True";
 
                 var optionsBuilder = new DbContextOptionsBuilder<SubiektGTDbContext>();
                 optionsBuilder.UseSqlServer(connstr);
+
+                Console.WriteLine($"Connectionstring from subiekt: {connstr}");
 
                 db = new SubiektGTDbContext(optionsBuilder.Options);
 
