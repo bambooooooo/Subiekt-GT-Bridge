@@ -58,12 +58,16 @@ else
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<TxContext>();
+    db.Database.EnsureCreated();
+}
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-else
+
+if(!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
     app.UseAuthentication();
@@ -75,6 +79,9 @@ app.UseHttpLogging();
 app.RegisterIndexEndpoint();
 app.RegisterProductEndpoint();
 app.RegisterPackageEndpoint();
+app.RegisterOrderEndpoint();
+app.RegisterPriceEndpoint();
+app.RegisterUserEndpoint();
 
 var localIp = Dns.GetHostEntry(Dns.GetHostName())
     .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork 
