@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SGT_BRIDGE.Models;
+using SGT_BRIDGE.Models.Native;
 using SGT_BRIDGE.Models.Order;
 using SGT_BRIDGE.Services;
 using System.ComponentModel;

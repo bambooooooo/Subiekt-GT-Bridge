@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SGT_BRIDGE.Models;
+namespace SGT_BRIDGE.Models.Native;
 
 public partial class sl_Magazyn
 {

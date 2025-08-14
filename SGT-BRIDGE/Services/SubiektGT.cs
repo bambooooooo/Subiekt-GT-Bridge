@@ -1,7 +1,7 @@
 ﻿using InsERT;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using SGT_BRIDGE.Models;
+using SGT_BRIDGE.Models.Native;
 using SGT_BRIDGE.Models.Order;
 using System.Threading.Channels;
 

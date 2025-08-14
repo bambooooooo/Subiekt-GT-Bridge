@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 using SGT_BRIDGE.Models.Product;
+using SGT_BRIDGE.Models.Native;
 
 namespace SGT_BRIDGE.Endpoints
 {

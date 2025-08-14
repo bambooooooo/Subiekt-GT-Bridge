@@ -4,14 +4,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace SGT_BRIDGE.Models;
+namespace SGT_BRIDGE.Models.Native;
 
 public partial class SubiektGTDbContext : DbContext
 {
-    public SubiektGTDbContext()
-    {
-    }
-
     public SubiektGTDbContext(DbContextOptions<SubiektGTDbContext> options)
         : base(options)
     {
@@ -36,10 +32,6 @@ public partial class SubiektGTDbContext : DbContext
     public virtual DbSet<vwPolaWlasne_Dokument> vwPolaWlasne_Dokument { get; set; }
 
     public virtual DbSet<vwPolaWlasne_Kontrahent> vwPolaWlasne_Kontrahent { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(local)\\PROD;Initial Catalog=MEGSTYL;Integrated Security=True;Encrypt=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
