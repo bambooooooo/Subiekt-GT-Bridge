@@ -112,6 +112,16 @@ namespace SGT_BRIDGE.Services
 
                 _subiekt = (Subiekt)gt.Uruchom((int)UruchomDopasujEnum.gtaUruchomDopasujOperatora, (int)UruchomEnum.gtaUruchomNowy | (int)UruchomEnum.gtaUruchomWTle);
 
+                string auth = (_config["SGT:Auth"] == "Windows") ? "Integrated Security=True" : $"User Id={_config["SGT:User"]};Password={_config["SGT:Password"]}";
+                string connstr = $"Data Source={_config["SGT:Server"]};Initial Catalog={_config["SGT:Database"]};{auth};Encrypt=True;Trust Server Certificate=True";
+
+                var optionsBuilder = new DbContextOptionsBuilder<SubiektGTDbContext>();
+                optionsBuilder.UseSqlServer(connstr);
+
+                Console.WriteLine($"Connectionstring from subiekt: {connstr}");
+
+                db = new SubiektGTDbContext(optionsBuilder.Options);
+
                 Console.WriteLine($"Connected. (PID={_subiekt.IdentyfikatorProcesu})");
 
                 while(!_cts.IsCancellationRequested)
@@ -133,6 +143,7 @@ namespace SGT_BRIDGE.Services
             catch(Exception ex)
             {
                 Console.WriteLine("STA Thread Exception: " + ex.Message);
+                throw ex;
             }
         }
 

@@ -5,15 +5,14 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http.Json;
 using System.Reflection;
 using System.Net;
+using SGT_BRIDGE.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var versionRevision = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0];
 
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -56,6 +55,10 @@ else
     });
 }
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -74,6 +77,12 @@ if(!app.Environment.IsDevelopment())
     app.UseAuthorization();
 }
 
+var localIp = Dns.GetHostEntry(Dns.GetHostName())
+    .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
+        && (ip.ToString().StartsWith("192.") || ip.ToString().StartsWith("10.")));
+
+app.Urls.Add($"http://{localIp}:5071");
+
 app.UseHttpLogging();
 
 app.RegisterIndexEndpoint();
@@ -83,12 +92,7 @@ app.RegisterOrderEndpoint();
 app.RegisterPriceEndpoint();
 app.RegisterUserEndpoint();
 
-var localIp = Dns.GetHostEntry(Dns.GetHostName())
-    .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork 
-        && (ip.ToString().StartsWith("192.") || ip.ToString().StartsWith("10.")));
 
-app.Urls.Add($"http://{localIp}:5071");
-app.Urls.Add($"http://localhost:5071");
 
 app.Run();
 
