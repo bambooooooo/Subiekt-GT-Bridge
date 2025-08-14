@@ -7,6 +7,7 @@ using System.Data;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
+using SGT_BRIDGE.Models.Product;
 
 namespace SGT_BRIDGE.Endpoints
 {

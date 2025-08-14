@@ -5,8 +5,8 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http.Json;
 using System.Reflection;
 using System.Net;
-using SGT_BRIDGE.Models;
 using Microsoft.EntityFrameworkCore;
+using SGT_BRIDGE.Models.Order;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +38,10 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddSingleton<SubiektGT>();
+builder.Services.AddDbContext<TxContext>(options =>
+{
+    options.UseSqlite("Data Source=tx.db");
+});
 
 builder.Services.AddAuthentication().AddBearerToken();
 builder.Services.AddAuthorization();

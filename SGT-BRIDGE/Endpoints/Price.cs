@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGT_BRIDGE.Models;
+using SGT_BRIDGE.Models.Price;
 using SGT_BRIDGE.Services;
 
 namespace SGT_BRIDGE.Endpoints

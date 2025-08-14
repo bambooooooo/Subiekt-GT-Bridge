@@ -1,74 +1,86 @@
 ﻿{
-  "CodeGenerationMode": 4,
-  "ContextClassName": "SubiektGTDbContext",
-  "ContextNamespace": null,
-  "FilterSchemas": false,
-  "IncludeConnectionString": true,
-  "MinimumProductVersion": "2.6.0",
-  "ModelNamespace": null,
-  "OutputContextPath": null,
-  "OutputPath": "Models",
-  "PreserveCasingWithRegex": true,
-  "ProjectRootNamespace": "SGT_BRIDGE",
-  "Schemas": null,
-  "SelectedHandlebarsLanguage": 2,
-  "SelectedToBeGenerated": 0,
-  "T4TemplatePath": null,
-  "Tables": [
-    {
-      "Name": "[dbo].[LEO_SystemRabatowy_Zbiorcze]",
-      "ObjectType": 0
-    },
-    {
-      "Name": "[dbo].[LEO_SystemRabatowy_Zestawy]",
-      "ObjectType": 0
-    },
-    {
-      "Name": "[dbo].[LEO_SystemRabatowy_ZestawyGrupyKh]",
-      "ObjectType": 0
-    },
-    {
-      "Name": "[dbo].[LEO_SystemRabatowy_ZestawyKontrahenci]",
-      "ObjectType": 0
-    },
-    {
-      "Name": "[dbo].[LEO_SystemRabatowy_ZestawyMagazyny]",
-      "ObjectType": 0
-    },
-    {
-      "Name": "[dbo].[LEO_SystemRabatowy_ZestawyPowiazania]",
-      "ObjectType": 0
-    },
-    {
-      "Name": "[dbo].[sl_Magazyn]",
-      "ObjectType": 0
-    }
-  ],
-  "UiHint": null,
-  "UncountableWords": null,
-  "UseAsyncStoredProcedureCalls": true,
-  "UseBoolPropertiesWithoutDefaultSql": false,
-  "UseDatabaseNames": true,
-  "UseDatabaseNamesForRoutines": true,
-  "UseDateOnlyTimeOnly": true,
-  "UseDbContextSplitting": false,
-  "UseDecimalDataAnnotationForSprocResult": true,
-  "UseFluentApiOnly": true,
-  "UseHandleBars": false,
-  "UseHierarchyId": false,
-  "UseInflector": false,
-  "UseInternalAccessModifiersForSprocsAndFunctions": false,
-  "UseLegacyPluralizer": false,
-  "UseManyToManyEntity": false,
-  "UseNoDefaultConstructor": false,
-  "UseNoNavigations": false,
-  "UseNoObjectFilter": false,
-  "UseNodaTime": false,
-  "UseNullableReferences": false,
-  "UsePrefixNavigationNaming": false,
-  "UseSchemaFolders": false,
-  "UseSchemaNamespaces": false,
-  "UseSpatial": false,
-  "UseT4": false,
-  "UseT4Split": false
+   "CodeGenerationMode": 4,
+   "ContextClassName": "SubiektGTDbContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "MinimumProductVersion": "2.6.0",
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "SGT_BRIDGE",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[LEO_SystemRabatowy_Zbiorcze]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LEO_SystemRabatowy_Zestawy]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LEO_SystemRabatowy_ZestawyGrupyKh]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LEO_SystemRabatowy_ZestawyKontrahenci]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LEO_SystemRabatowy_ZestawyMagazyny]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LEO_SystemRabatowy_ZestawyPowiazania]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[sl_Magazyn]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[sl_Panstwo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[vwPolaWlasne_Dokument]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[vwPolaWlasne_Kontrahent]",
+         "ObjectType": 3
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseInternalAccessModifiersForSprocsAndFunctions": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
 }

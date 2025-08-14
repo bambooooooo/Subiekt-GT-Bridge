@@ -1,5 +1,5 @@
 ﻿using InsERT;
-using SGT_BRIDGE.Models;
+using SGT_BRIDGE.Models.Product;
 using SGT_BRIDGE.Services;
 
 namespace SGT_BRIDGE.Endpoints

@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SGT_BRIDGE.Models;
+using SGT_BRIDGE.Models.Order;
 using System.Threading.Channels;
 
 namespace SGT_BRIDGE.Services

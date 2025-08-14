@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SGT_BRIDGE.Models;
+using SGT_BRIDGE.Models.User;
 using SGT_BRIDGE.Services;
 using System.Runtime.InteropServices;
 
