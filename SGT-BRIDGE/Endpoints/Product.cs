@@ -90,251 +90,277 @@ namespace SGT_BRIDGE.Endpoints
         {
             return await worker.EnqueueAsync<IResult>(sgt =>
             {
-                Towar tw;
+                Towar tw = null;
 
-                if(sgt.TowaryManager.IstniejeWg(p.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu))
+                try
                 {
-                    tw = sgt.TowaryManager.WczytajTowarWg(p.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu);
-                }
-                else
-                {
-                    if(p.Id == null)
-                        return TypedResults.BadRequest("Can not add product without Id");
-
-                    if (p.Key == null)
-                        return TypedResults.BadRequest("Can not add product without Key");
-
-                    tw = sgt.TowaryManager.DodajKomplet();
-                    tw.Symbol = p.Id;
-                    tw.Nazwa = p.Key;
-                    tw.OznaczenieJpkVat = OznaczenieTowJpkVatEnum.gtaOznaczTowJpkVat00_NieOznaczaj;
-                    tw.Zapisz();
-                }
-
-                if(p.Key != null)
-                {
-                    tw.Nazwa = p.Key;
-                }
-                
-                if(p.NamePl != null)
-                    tw.Opis = p.NamePl;
-
-                if(p.NameEn != null && worker.NAME_EN_FIELD_NAME != string.Empty)
-                    tw.PoleWlasne[worker.NAME_EN_FIELD_NAME] = p.NameEn;
-
-                if (p.Ean != null && p.Ean.Length > 1)
-                {
-                    if (tw.KodyKreskowe.Podstawowy is DBNull || tw.KodyKreskowe.Podstawowy != p.Ean)
+                    if (sgt.TowaryManager.IstniejeWg(p.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu))
                     {
-                        try
-                        {
-                            tw.KodyKreskowe.Podstawowy = p.Ean;
-                        }
-                        catch (System.Runtime.InteropServices.COMException)
-                        {
-                            return TypedResults.UnprocessableEntity("Can not add main barcode");
-                        }
+                        tw = sgt.TowaryManager.WczytajTowarWg(p.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu);
                     }
-                }
-
-                if (p.Volume > 0)
-                {
-                    if (tw.Objetosc is DBNull || tw.Objetosc == null || Math.Round(tw.Objetosc, 3) != Math.Round(p.Volume, 3))
+                    else
                     {
-                        tw.Objetosc = Math.Round((decimal)p.Volume, 3);
+                        if(p.Id == null)
+                            return TypedResults.BadRequest("Can not add product without Id");
+
+                        if (p.Key == null)
+                            return TypedResults.BadRequest("Can not add product without Key");
+
+                        tw = sgt.TowaryManager.DodajKomplet();
+                        tw.Symbol = p.Id;
+                        tw.Nazwa = p.Key;
+                        tw.OznaczenieJpkVat = OznaczenieTowJpkVatEnum.gtaOznaczTowJpkVat00_NieOznaczaj;
+                        tw.Zapisz();
                     }
-                }
 
-                if (p.Length > 0)
-                {
-                    tw.PoleWlasne[worker.LENGTH_FIELD_NAME] = p.Length;
-                }
-
-                if (p.Width > 0)
-                {
-                    tw.PoleWlasne[worker.WIDTH_FIELD_NAME] = p.Width;
-                }
-
-                if (p.Height > 0)
-                {
-                    tw.PoleWlasne[worker.HEIGHT_FIELD_NAME] = p.Height;
-                }
-
-                if (p.Mass > 0)
-                {
-                    tw.Masa = p.Mass;
-                }
-
-                if(p.Packages != null)
-                {
-                    List<string> validItems = p.Packages.Select(x => x.Id).ToList();
-
-                    foreach (TwSkladnik skl in tw.Skladniki)
+                    if (p.Key != null)
                     {
-                        Towar skladnik = sgt.TowaryManager.WczytajTowar(skl.TowarId);
+                        tw.Nazwa = p.Key;
+                    }
 
-                        if (!validItems.Contains(skladnik.Symbol))
+                    if (p.NamePl != null)
+                        tw.Opis = p.NamePl;
+
+                    if (p.NameEn != null && worker.NAME_EN_FIELD_NAME != string.Empty)
+                        tw.PoleWlasne[worker.NAME_EN_FIELD_NAME] = p.NameEn;
+
+                    if (p.Ean != null && p.Ean.Length > 1)
+                    {
+                        if (tw.KodyKreskowe.Podstawowy is DBNull || tw.KodyKreskowe.Podstawowy != p.Ean)
                         {
-                            skl.Usun();
+                            try
+                            {
+                                tw.KodyKreskowe.Podstawowy = p.Ean;
+                            }
+                            catch (System.Runtime.InteropServices.COMException)
+                            {
+                                tw.Zamknij();
+                                return TypedResults.UnprocessableEntity("Can not add main barcode");
+                            }
                         }
                     }
 
-                    foreach (var item in p.Packages)
+                    if (p.Volume > 0)
                     {
-                        if (!sgt.TowaryManager.IstniejeWg(item.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu))
+                        if (tw.Objetosc is DBNull || tw.Objetosc == null || Math.Round(tw.Objetosc, 3) != Math.Round(p.Volume, 3))
                         {
-                            return TypedResults.BadRequest($"Package [Id={item.Id}] can not be assigned, because it does not exit");
+                            tw.Objetosc = Math.Round((decimal)p.Volume, 3);
                         }
+                    }
 
-                        Towar s = sgt.TowaryManager.WczytajTowarWg(item.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu);
+                    if (p.Length > 0)
+                    {
+                        tw.PoleWlasne[worker.LENGTH_FIELD_NAME] = p.Length;
+                    }
 
-                        bool found = false;
+                    if (p.Width > 0)
+                    {
+                        tw.PoleWlasne[worker.WIDTH_FIELD_NAME] = p.Width;
+                    }
+
+                    if (p.Height > 0)
+                    {
+                        tw.PoleWlasne[worker.HEIGHT_FIELD_NAME] = p.Height;
+                    }
+
+                    if (p.Mass > 0)
+                    {
+                        tw.Masa = p.Mass;
+                    }
+
+                    if (p.Packages != null)
+                    {
+                        List<string> validItems = p.Packages.Select(x => x.Id).ToList();
 
                         foreach (TwSkladnik skl in tw.Skladniki)
                         {
                             Towar skladnik = sgt.TowaryManager.WczytajTowar(skl.TowarId);
 
-                            if (skladnik.Symbol == item.Id)
+                            if (!validItems.Contains(skladnik.Symbol))
                             {
-                                found = true;
+                                skl.Usun();
+                            }
+                        }
 
-                                if (skl.Ilosc != item.Quantity)
+                        foreach (var item in p.Packages)
+                        {
+                            if (!sgt.TowaryManager.IstniejeWg(item.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu))
+                            {
+                                return TypedResults.BadRequest($"Package [Id={item.Id}] can not be assigned, because it does not exit");
+                            }
+
+                            Towar s = sgt.TowaryManager.WczytajTowarWg(item.Id, TowarParamWyszukEnum.gtaTowarWgSymbolu);
+
+                            bool found = false;
+
+                            foreach (TwSkladnik skl in tw.Skladniki)
+                            {
+                                Towar skladnik = sgt.TowaryManager.WczytajTowar(skl.TowarId);
+
+                                if (skladnik.Symbol == item.Id)
                                 {
-                                    skl.Ilosc = item.Quantity;
+                                    found = true;
+
+                                    if (skl.Ilosc != item.Quantity)
+                                    {
+                                        skl.Ilosc = item.Quantity;
+                                    }
+                                }
+                            }
+
+                            if (!found)
+                            {
+                                TwSkladnik skl = tw.Skladniki.Dodaj(s.Identyfikator);
+                                skl.Ilosc = item.Quantity;
+                            }
+                        }
+                    }
+
+                    if (p.BasePrice > 0)
+                    {
+                        tw.CenaKartotekowa = p.BasePrice;
+                    }
+
+                    bool priceUpdate = false;
+
+                    if (p.Prices != null && p.Prices.Count > 0)
+                    {
+                        foreach (TwCena cena in tw.Ceny)
+                        {
+                            var pl = p.Prices.FirstOrDefault(x => x.Code.ToUpper() == ((string)cena.Nazwa).ToUpper());
+
+                            if (pl != default)
+                            {
+                                if (pl.Brutto)
+                                {
+                                    cena.Brutto = pl.Price;
+                                }
+                                else
+                                {
+                                    cena.Netto = pl.Price;
                                 }
                             }
                         }
 
-                        if (!found)
+                        worker.db.ChangeTracker.Clear();
+
+                        foreach (var price in p.Prices)
                         {
-                            TwSkladnik skl = tw.Skladniki.Dodaj(s.Identyfikator);
-                            skl.Ilosc = item.Quantity;
-                        }
-                    }
-                }
+                            decimal netto = (price.Brutto) ? price.Price / 1.23m : price.Price;
+                            decimal brutto = (price.Brutto) ? price.Price : price.Price * 1.23m;
 
-                if (p.BasePrice > 0)
-                {
-                    tw.CenaKartotekowa = p.BasePrice;
-                }
+                            var priceLevel = worker.db.LEO_SystemRabatowy_Zestawy.FirstOrDefault(x => x.zr_Symbol == price.Id.ToUpper());
 
-                bool priceUpdate = false;
+                            if (priceLevel == default)
+                                continue;
 
-                if(p.Prices != null && p.Prices.Count > 0)
-                {
-                    foreach(TwCena cena in tw.Ceny)
-                    {
-                        var pl = p.Prices.FirstOrDefault(x => x.Code.ToUpper() == ((string)cena.Nazwa).ToUpper());
+                            int priceLevelId = priceLevel.zr_Id;
 
-                        if(pl != default)
-                        {
-                            if(pl.Brutto)
+                            int twId = tw.Identyfikator;
+                            var pp = worker.db.LEO_SystemRabatowy_ZestawyPowiazania.FirstOrDefault(x => x.zrp_ZestawId == priceLevelId && x.zrp_Typ.Value == 1 && x.zrp_ObiektId.Value == twId);
+
+                            if (pp == default)
                             {
-                                cena.Brutto = pl.Price;
+                                var newpp = worker.db.LEO_SystemRabatowy_ZestawyPowiazania.Add(new LEO_SystemRabatowy_ZestawyPowiazania()
+                                {
+                                    zrp_ZestawId = priceLevelId,
+                                    zrp_ObiektId = twId,
+                                    zrp_Typ = 1,
+                                    zrp_Wartosc = netto,
+                                    zrp_Wartosc2 = brutto,
+                                });
                             }
                             else
                             {
-                                cena.Netto = pl.Price;
+                                pp.zrp_Wartosc = netto;
+                                pp.zrp_Wartosc2 = brutto;
+                            }
+
+                            priceUpdate = true;
+                        }
+                    }
+
+                    if (p.Image != null && p.Image != "")
+                    {
+                        string tmpName = $"./tmp/{DateTime.Now:HH.mm.ss.ffff}";
+                        string tmpJpg = tmpName + ".jpg";
+
+                        byte[] enc;
+
+                        try
+                        {
+                            enc = Convert.FromBase64String(p.Image);
+                        }
+                        catch (FormatException)
+                        {
+                            tw.Zamknij();
+                            return TypedResults.BadRequest("Cannot read image");
+                        }
+
+                        File.WriteAllBytes(tmpName, enc);
+
+                        var im = (Bitmap)System.Drawing.Image.FromFile(tmpName);
+                        im = Utils.Utils.ProcessImageThumbnail(im, goalAspectRatio: 1.0f);
+
+                        Utils.Utils.SaveImgAsJpeg(tmpJpg, im);
+                        im.Dispose();
+
+                        if (tw.Zdjecia.Liczba <= 0)
+                        {
+                            TwZdjecie img = tw.Zdjecia.Dodaj(tmpJpg);
+                            img.Glowne = true;
+                        }
+                        else
+                        {
+                            Dodatki dod = new();
+                            TwZdjecie img = tw.Zdjecia.Wczytaj(1);
+                            var z = dod.ZmienBinariaNaZdjecie(img.Zdjecie);
+
+                            TwZdjecie imgNew = tw.Zdjecia.Dodaj(tmpJpg);
+
+                            if (((byte[])img.Zdjecie).Length != ((byte[])imgNew.Zdjecie).Length)
+                            {
+                                imgNew.Glowne = true;
+                                img.Usun();
+                            }
+                            else
+                            {
+                                imgNew.Usun();
                             }
                         }
                     }
 
-                    foreach(var price in p.Prices)
-                    {
-                        decimal netto = (price.Brutto) ? price.Price / 1.23m : price.Price;
-                        decimal brutto = (price.Brutto) ? price.Price : price.Price * 1.23m;
+                    tw.Zapisz();
 
-                        var priceLevel = worker.db.LEO_SystemRabatowy_Zestawy.FirstOrDefault(x => x.zr_Symbol == price.Id.ToUpper());
+                    int id = tw.Identyfikator;
+                    tw.Zamknij();
 
-                        if (priceLevel == default)
-                            continue;
+                    if (priceUpdate)
+                        worker.db.SaveChanges();
 
-                        int priceLevelId = priceLevel.zr_Id;
-
-                        int twId = tw.Identyfikator;
-                        var pp = worker.db.LEO_SystemRabatowy_ZestawyPowiazania.FirstOrDefault(x=>x.zrp_ZestawId == priceLevelId && x.zrp_Typ.Value == 1 && x.zrp_ObiektId.Value == twId);
-
-                        if (pp == default)
-                        {
-                            var newpp = worker.db.LEO_SystemRabatowy_ZestawyPowiazania.Add(new LEO_SystemRabatowy_ZestawyPowiazania()
-                            {
-                                zrp_ZestawId = priceLevelId,
-                                zrp_ObiektId = twId,
-                                zrp_Typ = 1,
-                                zrp_Wartosc = netto,
-                                zrp_Wartosc2 = brutto,
-                            });
-                        }
-                        else
-                        {
-                            pp.zrp_Wartosc = netto;
-                            pp.zrp_Wartosc2 = brutto;
-                        }
-
-                        priceUpdate = true;
-                    }
+                    Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][+] Product #{p.Id}.");
                 }
-
-                if (p.Image != null && p.Image != "")
+                catch(Exception ex)
                 {
-                    string tmpName = $"./tmp/{DateTime.Now:HH.mm.ss.ffff}";
-                    string tmpJpg = tmpName + ".jpg";
-
-                    byte[] enc;
-
-                    try
+                    logger.LogInformation("Error");
+                    logger.LogInformation($"{ex.Message}");
+                }
+                finally
+                {
+                    if (tw != null)
                     {
-                       enc = Convert.FromBase64String(p.Image);
-                    }
-                    catch(FormatException)
-                    {
-                        return TypedResults.BadRequest("Cannot read image");
-                    }
-                    
-                    File.WriteAllBytes(tmpName, enc);
-
-                    var im = (Bitmap)System.Drawing.Image.FromFile(tmpName);
-                    im = Utils.Utils.ProcessImageThumbnail(im, goalAspectRatio: 1.0f);
-
-                    Utils.Utils.SaveImgAsJpeg(tmpJpg, im);
-                    im.Dispose();
-
-                    if (tw.Zdjecia.Liczba <= 0)
-                    {
-                        TwZdjecie img = tw.Zdjecia.Dodaj(tmpJpg);
-                        img.Glowne = true;
-                    }
-                    else
-                    {
-                        Dodatki dod = new();
-                        TwZdjecie img = tw.Zdjecia.Wczytaj(1);
-                        var z = dod.ZmienBinariaNaZdjecie(img.Zdjecie);
-
-                        TwZdjecie imgNew = tw.Zdjecia.Dodaj(tmpJpg);
-
-                        if (((byte[])img.Zdjecie).Length != ((byte[])imgNew.Zdjecie).Length)
+                        try
                         {
-                            imgNew.Glowne = true;
-                            img.Usun();
+                            tw.Zamknij();
                         }
-                        else
+                        catch(Exception ex)
                         {
-                            imgNew.Usun();
+
                         }
                     }
                 }
 
-                tw.Zapisz();
-
-                int id = tw.Identyfikator;
-                tw.Zamknij();
-
-                if(priceUpdate)
-                    worker.db.SaveChanges();
-
-                Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][+] Product #{p.Id}.");
-
-                return TypedResults.Ok(id);
+                return TypedResults.Ok();
             });
         }
 

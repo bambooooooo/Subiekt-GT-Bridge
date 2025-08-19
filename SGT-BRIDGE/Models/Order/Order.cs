@@ -71,6 +71,8 @@ namespace SGT_BRIDGE.Models.Order
             }
         }
 
+        public int Warehouse_id { get; set; } = 1;
+
         string _subtitle = "";
         /// <summary>
         /// Podtytuł zamówienia: do 50 znaków.

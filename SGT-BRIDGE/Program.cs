@@ -63,6 +63,11 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestHeadersTotalSize = 64 * 1024;
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

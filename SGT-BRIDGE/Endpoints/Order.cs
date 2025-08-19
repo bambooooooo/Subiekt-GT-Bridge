@@ -25,9 +25,9 @@ namespace SGT_BRIDGE.Endpoints
             items.MapPut("/realize/{id:int}", Realize);
             items.MapPut("/realize/{source}/{externalNumber}", RealizeExternal);
             items.MapGet("/realize/{source}/{externalNumber}", RealizeExternal);
-
             items.MapDelete("/{id}", Delete);
             items.MapDelete("/{source}/{externalNumber}", DeleteExternal);
+
             items.MapGet("/tx", GetTranslations);
             items.MapGet("/tx/{source}/{from}", GetTranslation);
             items.MapPost("/tx/{source}/{from}", UpdateTranslation);
@@ -35,75 +35,6 @@ namespace SGT_BRIDGE.Endpoints
             items.MapDelete("/tx/{id:int}", DeleteTranslationById);
 
             items.MapPut("/flag/{id}", SetFlagById);
-
-            items.MapGet("/test", (SubiektGT worker) =>
-            {
-                return worker.EnqueueAsync<IResult>(subiekt =>
-                {
-                    var zks = new List<SuDokument>();
-
-                    SuDokument zkKowalski = subiekt.SuDokumentyManager.DodajZK();
-                    zkKowalski.KontrahentId = 122;
-                    zks.Add(zkKowalski);
-
-                    SuDokument zkKupmeble = subiekt.SuDokumentyManager.DodajZK();
-                    zkKupmeble.KontrahentId = 1034;
-                    zks.Add(zkKupmeble);
-
-                    SuDokument zkAgata = subiekt.SuDokumentyManager.DodajZK();
-                    zkAgata.KontrahentId = 612;
-                    zks.Add(zkAgata);
-
-                    SuDokument zkFurnlux = subiekt.SuDokumentyManager.DodajZK();
-                    zkFurnlux.KontrahentId = 1287;
-                    zks.Add(zkFurnlux);
-
-                    SuDokument zkNapkins = subiekt.SuDokumentyManager.DodajZK();
-                    zkNapkins.KontrahentId = 4195;
-                    zks.Add(zkNapkins);
-
-                    foreach (SuDokument zk in zks)
-                    {
-                        zk.DataOtrzymania = DateTime.Now;
-                        zk.Podtytul = "API";
-
-                        zk.PobierzParametryKontrahenta();
-
-                        Console.WriteLine($"[{zk.KontrahentId}] Waluta: {zk.WalutaSymbol}");
-
-                        if (zk.WalutaSymbol != "PLN")
-                        {
-                            zk.PobierzKursWalutyWgParametrow();
-                        }
-
-                        SuPozycja poz = zk.Pozycje.Dodaj(7701);
-                        poz.IloscJm = (decimal)1;
-
-                        zk.Zapisz();
-                    }
-
-                    return TypedResults.Ok("Ok.");
-                });
-            });
-            items.MapGet("/test/fixed", (SubiektGT worker) =>
-            {
-                return worker.EnqueueAsync<IResult>(subiekt =>
-                {
-                    SuDokument zk = subiekt.SuDokumentyManager.DodajZK();
-                    zk.KontrahentId = 122;
-                    zk.DataOtrzymania = DateTime.Now;
-                    zk.Podtytul = "API - cena z baselinkera";
-
-                    SuPozycja poz = zk.Pozycje.Dodaj(7701);
-                    poz.IloscJm = (decimal)1;
-                    poz.CenaBruttoPrzedRabatem = (decimal)188.88;
-                    poz.CenaBruttoPoRabacie = (decimal)188.88;
-
-                    zk.Zapisz();
-
-                    return TypedResults.Ok("Ok 2 ");
-                });
-            });
         }
         /// <summary>
         /// Retrieves order
@@ -244,12 +175,14 @@ namespace SGT_BRIDGE.Endpoints
         {
             return await worker.EnqueueAsync<IResult>(subiekt =>
             {
+                subiekt.MagazynId = o.Warehouse_id;
+
                 InsERT.SuDokument order = null;
                 InsERT.Kontrahent client = null;
 
                 UpdateResult result = new();
 
-                if (!Exist(worker, o.Source, o.External_number))
+                if (!Exist(worker, o.Source, o.External_number, o.Warehouse_id))
                 {
                     order = subiekt.SuDokumentyManager.DodajZK();
 
@@ -289,11 +222,13 @@ namespace SGT_BRIDGE.Endpoints
                     order.Zamknij();
                 }
 
+                IResult res = TypedResults.Ok();
+
                 for (int i = 0; i < 100; i++)
                 {
                     try
                     {
-                        order = subiekt.SuDokumentyManager.Wczytaj(GetId(worker, o.Source, o.External_number));
+                        order = subiekt.SuDokumentyManager.Wczytaj(GetId(worker, o.Source, o.External_number, o.Warehouse_id));
                         order.Tytul = order.Tytul; // LOCK
 
                         UpdateOrderSubtitle(ref order, o, result);
@@ -322,6 +257,13 @@ namespace SGT_BRIDGE.Endpoints
 
                         order.Zapisz();
                         Console.WriteLine("Order saved");
+
+                        res = TypedResults.Ok(new UpdateOrderResult
+                        {
+                            Id = (int)order.Identyfikator,
+                            Number = order.NumerPelny
+                        });
+
                         break;
                     }
                     catch (System.Runtime.InteropServices.COMException ex)
@@ -333,7 +275,7 @@ namespace SGT_BRIDGE.Endpoints
                         }
                         else
                         {
-                            TypedResults.BadRequest(ex);
+                            res = TypedResults.BadRequest(ex);
                             break;
                         }
                     }
@@ -342,7 +284,7 @@ namespace SGT_BRIDGE.Endpoints
                         Console.WriteLine(ex.Message);
                         Console.WriteLine(ex.StackTrace);
 
-                        TypedResults.BadRequest(ex);
+                        res = TypedResults.BadRequest(ex);
                         break;
                     }
                     catch (Exception ex)
@@ -350,7 +292,7 @@ namespace SGT_BRIDGE.Endpoints
                         Console.WriteLine(ex);
                         Console.WriteLine(ex.StackTrace);
 
-                        TypedResults.BadRequest(ex);
+                        res = TypedResults.BadRequest(ex);
                         break;
                     }
                     finally
@@ -363,8 +305,14 @@ namespace SGT_BRIDGE.Endpoints
                     }
                 }
 
-                return TypedResults.Ok();
+                return res;
             });
+        }
+
+        class UpdateOrderResult
+        {
+            public int Id { get; set; }
+            public string Number { get; set; }
         }
 
         private static int GetClient(Subiekt subiekt, SubiektGT worker, OrderInvoice invoice)
@@ -1323,25 +1271,25 @@ namespace SGT_BRIDGE.Endpoints
         }
 
         /// <summary>
-        /// Check if document with (source, ext_number) exist
+        /// Check if document with (source, ext_number, warehouse_id) exist
         /// </summary>
         /// <returns></returns>
-        public static bool Exist(SubiektGT worker, string source, string externalNumber)
+        public static bool Exist(SubiektGT worker, string source, string externalNumber, int magId)
         {
             var predicate = BuildFilter("pwd_Tekst02", source, externalNumber);
-            return worker.db.vwPolaWlasne_Dokument.FirstOrDefault(predicate) != default;
+            return worker.db.vwPolaWlasne_Dokument.Where(x=>x.dok_MagId == magId).FirstOrDefault(predicate) != default;
         }
 
         /// <summary>
-        /// Zwraca Id dokumentu (dok_Id) na podstawie pary (Source, ExternalOrderNumber)
+        /// Zwraca Id dokumentu (dok_Id) na podstawie pary (Source, ExternalOrderNumber, WarehouseId)
         /// </summary>
         /// <param name="source"></param>
         /// <param name="externalNumber"></param>
         /// <returns></returns>
-        public static int GetId(SubiektGT worker, string source, string externalNumber)
+        public static int GetId(SubiektGT worker, string source, string externalNumber, int warehouseId)
         {
             var predicate = BuildFilter("pwd_Tekst02", source, externalNumber);
-            return worker.db.vwPolaWlasne_Dokument.FirstOrDefault(predicate).dok_Id;
+            return worker.db.vwPolaWlasne_Dokument.Where(x => x.dok_MagId == warehouseId).FirstOrDefault(predicate).dok_Id;
         }
 
         /// <summary>
