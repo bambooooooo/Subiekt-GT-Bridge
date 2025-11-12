@@ -7,6 +7,7 @@ using System.Data;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
+using SGT_BRIDGE.Utils;
 
 namespace SGT_BRIDGE.Endpoints
 {
@@ -216,7 +217,7 @@ namespace SGT_BRIDGE.Endpoints
                     tw.CenaKartotekowa = p.BasePrice;
                 }
 
-                bool priceUpdate = false;
+                bool priceOrExtrasUpdate = false;
 
                 if(p.Prices != null && p.Prices.Count > 0)
                 {
@@ -269,7 +270,7 @@ namespace SGT_BRIDGE.Endpoints
                             pp.zrp_Wartosc2 = brutto;
                         }
 
-                        priceUpdate = true;
+                        priceOrExtrasUpdate = true;
                     }
                 }
 
@@ -327,7 +328,38 @@ namespace SGT_BRIDGE.Endpoints
                 int id = tw.Identyfikator;
                 tw.Zamknij();
 
-                if(priceUpdate)
+                if (p.Extras != null)
+                {
+                    var twi = worker.db.twi_TowarIndeks.FirstOrDefault(x => x.twi_Id == id);
+
+                    bool isnew = twi == default;
+
+                    if (isnew)
+                    {
+                        twi = new twi_TowarIndeks()
+                        {
+                            twi_Id = id
+                        };
+                    }
+
+                    foreach (var x in p.Extras)
+                    {
+                        EntityHelper.SetValue(twi, x.Key, x.Value);
+                    }
+
+                    if (isnew)
+                    {
+                        worker.db.twi_TowarIndeks.Add(twi);
+                    }
+                    else
+                    {
+                        worker.db.twi_TowarIndeks.Update(twi);
+                    }
+
+                    priceOrExtrasUpdate = true;
+                }
+
+                if (priceOrExtrasUpdate)
                     worker.db.SaveChanges();
 
                 Console.WriteLine($"[{DateTime.Now:yyyy.MM.dd HH:mm:ss}][+] Product #{p.Id}.");

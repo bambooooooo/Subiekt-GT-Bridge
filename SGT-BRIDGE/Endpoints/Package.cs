@@ -1,6 +1,8 @@
 ﻿using InsERT;
+using Microsoft.Extensions.Logging;
 using SGT_BRIDGE.Models;
 using SGT_BRIDGE.Services;
+using SGT_BRIDGE.Utils;
 
 namespace SGT_BRIDGE.Endpoints
 {
@@ -134,6 +136,49 @@ namespace SGT_BRIDGE.Endpoints
 
                 int id = tw.Identyfikator;
                 tw.Zamknij();
+                
+                if (p.Extras != null)
+                {
+                    try
+                    {
+                        var twi = worker.db.twi_TowarIndeks.FirstOrDefault(x => x.twi_Id == id);
+
+                        bool isnew = twi == default;
+
+                        if (isnew)
+                        {
+                            twi = new twi_TowarIndeks()
+                            {
+                                twi_Id = id
+                            };
+                        }
+
+
+                        foreach (var x in p.Extras)
+                        {
+                            EntityHelper.SetValue(twi, x.Key, x.Value);
+                        }
+
+
+                        if (isnew)
+                        {
+                            worker.db.twi_TowarIndeks.Add(twi);
+                        }
+                        else
+                        {
+                            worker.db.twi_TowarIndeks.Update(twi);
+                        }
+
+                        worker.db.SaveChanges();
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+
+                        return TypedResults.BadRequest(ex.Message);
+                    }
+                }
 
                 return TypedResults.Ok(id);
             });

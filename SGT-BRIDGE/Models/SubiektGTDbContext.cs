@@ -31,6 +31,7 @@ public partial class SubiektGTDbContext : DbContext
 
     public virtual DbSet<sl_Magazyn> sl_Magazyn { get; set; }
 
+    public virtual DbSet<twi_TowarIndeks> twi_TowarIndeks { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<LEO_SystemRabatowy_Zbiorcze>(entity =>
@@ -44,7 +45,7 @@ public partial class SubiektGTDbContext : DbContext
 
         modelBuilder.Entity<LEO_SystemRabatowy_Zestawy>(entity =>
         {
-            entity.HasKey(e => e.zr_Id);
+            entity.HasKey(e => e.zr_Id).HasName("PK__LEO_Syst__FB4BF42D1D0EF822");
 
             entity.HasIndex(e => e.zr_Symbol, "SymbolUnique").IsUnique();
 
@@ -76,7 +77,7 @@ public partial class SubiektGTDbContext : DbContext
 
         modelBuilder.Entity<LEO_SystemRabatowy_ZestawyKontrahenci>(entity =>
         {
-            entity.HasKey(x => new { x.zrk_ZestawId, x.zrk_KontrahentId });
+            entity.HasNoKey();
 
             entity.HasIndex(e => new { e.zrk_ZestawId, e.zrk_KontrahentId }, "IDX_ZK")
                 .IsUnique()
@@ -85,7 +86,7 @@ public partial class SubiektGTDbContext : DbContext
 
         modelBuilder.Entity<LEO_SystemRabatowy_ZestawyMagazyny>(entity =>
         {
-            entity.HasKey(x => new { x.zrm_MagazynId, x.zrm_ZestawId });
+            entity.HasNoKey();
 
             entity.HasIndex(e => new { e.zrm_ZestawId, e.zrm_MagazynId }, "IDX_ZM")
                 .IsUnique()
@@ -94,7 +95,7 @@ public partial class SubiektGTDbContext : DbContext
 
         modelBuilder.Entity<LEO_SystemRabatowy_ZestawyPowiazania>(entity =>
         {
-            entity.HasKey(e => e.zrp_Id);
+            entity.HasKey(e => e.zrp_Id).HasName("PK__LEO_Syst__1F060F0FFD51D672");
 
             entity.HasIndex(e => new { e.zrp_Typ, e.zrp_ZestawId, e.zrp_ObiektId }, "IDX_ZP").IsUnique();
 
@@ -136,6 +137,397 @@ public partial class SubiektGTDbContext : DbContext
             entity.Property(e => e.mag_Symbol)
                 .IsRequired()
                 .HasMaxLength(3)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<twi_TowarIndeks>(entity =>
+        {
+            entity.HasKey(e => e.twi_Id);
+
+            entity.Property(e => e.twi_Id).ValueGeneratedNever();
+            entity.Property(e => e.twi_1)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_10)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_100)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_101)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_102)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_103)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_104)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_105)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_106)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_107)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_108)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_109)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_11)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_110)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_111)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_112)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_113)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_114)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_115)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_116)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_117)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_118)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_119)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_12)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_120)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_121)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_122)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_123)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_124)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_125)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_126)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_127)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_128)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_13)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_14)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_15)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_16)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_17)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_18)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_19)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_2)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_20)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_21)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_22)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_23)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_24)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_25)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_26)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_27)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_28)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_29)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_3)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_30)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_31)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_32)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_33)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_34)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_35)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_36)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_37)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_38)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_39)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_4)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_40)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_41)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_42)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_43)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_44)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_45)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_46)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_47)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_48)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_49)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_5)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_50)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_51)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_52)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_53)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_54)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_55)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_56)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_57)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_58)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_59)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_6)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_60)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_61)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_62)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_63)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_64)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_65)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_66)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_67)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_68)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_69)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_7)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_70)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_71)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_72)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_73)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_74)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_75)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_76)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_77)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_78)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_79)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_8)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_80)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_81)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_82)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_83)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_84)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_85)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_86)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_87)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_88)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_89)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_9)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_90)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_91)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_92)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_93)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_94)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_95)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_96)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_97)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_98)
+                .HasMaxLength(64)
+                .IsUnicode(false);
+            entity.Property(e => e.twi_99)
+                .HasMaxLength(64)
                 .IsUnicode(false);
         });
 

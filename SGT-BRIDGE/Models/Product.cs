@@ -65,6 +65,10 @@ namespace SGT_BRIDGE.Models
         /// <summary>
         /// Product price levels
         /// </summary>
-        public List<ProductPrice> Prices { get; set; }        
+        public List<ProductPrice> Prices { get; set; }
+        /// <summary>
+        /// Additional product data stored in dedicated custom table twi_TowarIndeks (not provided by erp vendor)
+        /// </summary>
+        public Dictionary<string, string> Extras { get; set; }
     }
 }
