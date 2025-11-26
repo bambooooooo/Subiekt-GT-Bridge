@@ -41,5 +41,9 @@ namespace SGT_BRIDGE.Models.Product
         /// Base price (TKW)
         /// </summary>
         public decimal BasePrice { get; set; }
+        /// <summary>
+        /// Additional product data stored in dedicated custom table twi_TowarIndeks (not provided by erp vendor)
+        /// </summary>
+        public Dictionary<string, string>? Extras { get; set; }
     }
 }
